@@ -1,0 +1,352 @@
+/* ============================================================
+   ONDEA STOCK INTELLIGENCE — Couches visuelles premium reprises d'Ondea Staff Manager v2 :
+   1) fond d'icônes animées discrètes (bouton Pause/Lecture)
+   2) zoom des vignettes au survol
+   3) effet « WHAOU » n°2 (écran d'accueil cinématique, filets lumineux,
+      titres scintillants, graphiques animés, entrées en cascade…)
+   Respecte le thème clair/sombre, le contraste élevé, « réduire les animations » et l'impression.
+   ============================================================ */
+  .ondea-bg-icons{
+    position:fixed; inset:0; z-index:-1; overflow:hidden;
+    pointer-events:none; user-select:none;
+    --obi-peak:.16;
+  }
+  html[data-theme="light"] .ondea-bg-icons{ --obi-peak:.2; }
+  html[data-contrast="high"] .ondea-bg-icons{ --obi-peak:.3; }
+
+  .ondea-bg-icons .obi{
+    position:absolute; left:0; top:0;
+    width:var(--s,36px); height:var(--s,36px);
+    color:var(--accent);
+    opacity:0;
+    will-change:transform,opacity;
+    animation:obi-drift var(--d,24s) ease-in-out forwards;
+  }
+  .ondea-bg-icons .obi svg{
+    width:100%; height:100%; display:block;
+    fill:none; stroke:currentColor;
+    stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round;
+  }
+  html[data-contrast="high"] .ondea-bg-icons .obi svg{ stroke-width:1.8; }
+
+  @keyframes obi-drift{
+    0%   { opacity:0;                  transform:translate(var(--x0),var(--y0)); }
+    20%  { opacity:var(--obi-peak); }
+    80%  { opacity:var(--obi-peak); }
+    100% { opacity:0;                  transform:translate(var(--x1),var(--y1)); }
+  }
+
+  /* Pause : les icônes se figent sur place */
+  .ondea-bg-icons.is-paused .obi{ animation-play-state:paused !important; }
+
+  /* Réduire les animations : quelques icônes fixes */
+  .ondea-bg-icons.is-static .obi{ animation:none !important; opacity:var(--obi-peak); }
+  .ondea-bg-icons.is-static.is-paused{ display:none; }
+
+  /* Bouton Pause / Lecture (style .top-btn existant) */
+  #bgPauseBtn .ic-play{ display:none; }
+  #bgPauseBtn.on{ background:var(--or-glow); border-color:var(--or-line); color:var(--accent-bright); }
+  #bgPauseBtn.on .ic-play{ display:block; }
+  #bgPauseBtn.on .ic-pause{ display:none; }
+
+  @media print{ .ondea-bg-icons, #bgPauseBtn{ display:none !important; } }
+  .tbl .cell-user .av.photo{cursor:zoom-in}
+  .av-zoom{
+    position:fixed; z-index:150; pointer-events:none;
+    border-radius:26px !important; overflow:hidden;
+    box-shadow:0 0 0 3px var(--bg-card),0 0 0 5px var(--accent),0 24px 60px -12px rgba(0,0,0,.55) !important;
+    transform:scale(.34); opacity:0; transform-origin:center center;
+    transition:transform .22s cubic-bezier(.34,1.56,.64,1),opacity .16s ease;
+  }
+  .av-zoom.on{transform:scale(1); opacity:1}
+  .av-zoom img{width:100%;height:100%;object-fit:cover;display:block}
+  @media (prefers-reduced-motion:reduce){ .av-zoom{transition:none} }
+  @media print{ .av-zoom{display:none!important} }
+  /* ---------- Jetons ---------- */
+  @property --p { syntax:"<number>"; inherits:true; initial-value:0; }
+  :root{
+    --wx2-shine:#FFF4D6;
+    --wx2-glow:rgba(231,200,119,.45);
+    --wx2-glow-soft:rgba(201,162,75,.22);
+    --wx2-flow:linear-gradient(90deg,var(--or-600),var(--or-300),#fff4d6,var(--or-300),var(--or-600));
+  }
+  html[data-theme="light"]{
+    --wx2-shine:#8a6a24;
+    --wx2-glow:rgba(184,146,63,.38);
+    --wx2-glow-soft:rgba(184,146,63,.18);
+  }
+
+  /* ==================== ÉCRAN D'ACCUEIL ==================== */
+  /* Rayons de lumière dorée qui tournent lentement */
+  #login::before{
+    content:""; position:absolute; inset:-30%; z-index:-1; pointer-events:none;
+    background:conic-gradient(from 0deg at 50% 50%,
+      transparent 0deg, rgba(201,162,75,.07) 12deg, transparent 26deg,
+      transparent 70deg, rgba(231,200,119,.06) 84deg, transparent 100deg,
+      transparent 160deg, rgba(201,162,75,.07) 176deg, transparent 192deg,
+      transparent 250deg, rgba(231,200,119,.05) 262deg, transparent 280deg,
+      transparent 320deg, rgba(201,162,75,.06) 334deg, transparent 350deg);
+    -webkit-mask:radial-gradient(closest-side, #000 25%, transparent 100%);
+            mask:radial-gradient(closest-side, #000 25%, transparent 100%);
+    animation:wx2Rays 60s linear infinite;
+  }
+  /* Poussière d'or qui s'élève */
+  #login::after{
+    content:""; position:absolute; inset:0; z-index:-1; pointer-events:none;
+    background-image:
+      radial-gradient(1.6px 1.6px at 12% 18%, rgba(231,200,119,.9), transparent 100%),
+      radial-gradient(1.2px 1.2px at 34% 72%, rgba(231,200,119,.7), transparent 100%),
+      radial-gradient(2px 2px   at 58% 40%, rgba(255,236,190,.8), transparent 100%),
+      radial-gradient(1.4px 1.4px at 81% 86%, rgba(231,200,119,.7), transparent 100%),
+      radial-gradient(1.8px 1.8px at 92% 28%, rgba(201,162,75,.8), transparent 100%),
+      radial-gradient(1.2px 1.2px at 24% 48%, rgba(255,236,190,.6), transparent 100%),
+      radial-gradient(1.5px 1.5px at 70% 8%,  rgba(231,200,119,.7), transparent 100%),
+      radial-gradient(2.4px 2.4px at 46% 94%, rgba(201,162,75,.55), transparent 100%);
+    background-size:320px 320px, 320px 320px, 320px 320px, 320px 320px, 460px 460px, 460px 460px, 460px 460px, 460px 460px;
+    animation:wx2Dust 30s linear infinite;
+    opacity:.75;
+  }
+  html[data-theme="light"] #login::after{ opacity:.55; filter:saturate(1.4) brightness(.8); }
+  @keyframes wx2Rays{ to{ transform:rotate(360deg); } }
+  @keyframes wx2Dust{
+    from{ background-position:0 0,0 0,0 0,0 0,0 0,0 0,0 0,0 0; }
+    to  { background-position:0 -320px,0 -320px,0 -320px,0 -320px,0 -460px,0 -460px,0 -460px,0 -460px; }
+  }
+
+  /* Carte d'accueil : halo doré respirant derrière la carte */
+  .login-box{ position:relative; }
+  .login-box::before{
+    content:""; position:absolute; inset:-3px; z-index:-1; border-radius:inherit; pointer-events:none;
+    background:conic-gradient(from var(--wx-angle), var(--or-500), transparent 25%, var(--or-300) 50%, transparent 75%, var(--or-500));
+    filter:blur(26px); opacity:.45;
+    animation:wxSpin 9s linear infinite, wx2Breathe 4.5s ease-in-out infinite;
+  }
+  @keyframes wx2Breathe{ 50%{ opacity:.7; } }
+  html[data-theme="light"] .login-box::before{ opacity:.3; }
+
+  /* Logo : lévitation + onde dorée */
+  .brand-mark{ animation:wx2Float 4.8s ease-in-out infinite, wx2MarkGlow 4.8s ease-in-out infinite; }
+  @keyframes wx2Float{ 50%{ translate:0 -6px; } }
+  @keyframes wx2MarkGlow{
+    0%,100%{ box-shadow:0 0 0 1px rgba(255,255,255,.18) inset, 0 10px 28px -6px rgba(201,162,75,.55), 0 0 0 0 rgba(231,200,119,.35); }
+    50%    { box-shadow:0 0 0 1px rgba(255,255,255,.18) inset, 0 18px 40px -8px rgba(201,162,75,.75), 0 0 0 12px rgba(231,200,119,0); }
+  }
+
+  /* Titre d'accueil : reflet qui balaie « Ondea Staff » */
+  .login-box h1{
+    background:linear-gradient(100deg, var(--txt) 0%, var(--txt) 34%, var(--or-400) 45%, var(--wx2-shine) 50%, var(--or-300) 55%, var(--txt) 66%, var(--txt) 100%);
+    background-size:260% 100%; background-position:100% 0;
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    animation:wx2Shimmer 7s ease-in-out infinite 1s;
+  }
+  @keyframes wx2Shimmer{ 0%,20%{ background-position:100% 0; } 65%,100%{ background-position:0% 0; } }
+
+  /* Contenu de la carte : apparition en cascade */
+  .login-box > .field, .login-box > .demo-accts{ animation:wx2Up .6s var(--ease) both; }
+  .login-box > .field:nth-of-type(1){ animation-delay:.08s; } .login-box > .field:nth-of-type(2){ animation-delay:.16s; }
+  .login-box > .demo-accts{ animation-delay:.32s; }
+  #demoList > *{ animation:wx2Up .5s var(--ease) both .4s; }
+  #demoList > *:nth-child(2){ animation-delay:.46s; } #demoList > *:nth-child(3){ animation-delay:.52s; }
+  #demoList > *:nth-child(4){ animation-delay:.58s; } #demoList > *:nth-child(n+5){ animation-delay:.64s; }
+  #loginBtn{ animation:wx2Up .6s var(--ease) both .24s, wx2Cta 3.6s ease-in-out infinite 1s; }
+  .demo-btn .av{ transition:box-shadow .3s; }
+  .demo-btn:hover .av{ box-shadow:0 0 0 2px var(--bg-card), 0 0 0 3.5px var(--accent), 0 0 16px var(--wx2-glow); }
+  @keyframes wx2Up{ from{ opacity:0; translate:0 12px; } }
+
+  /* ==================== STRUCTURE ==================== */
+  /* Filet de lumière qui court sous la barre supérieure et le long du menu */
+  .topbar{
+    background-image:linear-gradient(90deg, transparent, var(--or-400), var(--wx2-shine), var(--or-400), transparent);
+    background-repeat:no-repeat; background-size:34% 1px; background-position:-40% 100%;
+    animation:wx2RunX 9s ease-in-out infinite;
+  }
+  .sidebar{
+    background-image:linear-gradient(180deg, transparent, var(--or-400), var(--wx2-shine), var(--or-400), transparent);
+    background-repeat:no-repeat; background-size:1px 30%; background-position:100% -40%;
+    animation:wx2RunY 11s ease-in-out infinite 2s;
+  }
+  @keyframes wx2RunX{ 0%{ background-position:-40% 100%; } 60%,100%{ background-position:140% 100%; } }
+  @keyframes wx2RunY{ 0%{ background-position:100% -40%; } 60%,100%{ background-position:100% 140%; } }
+
+  .sb-brand .mk{ animation:wx2MarkGlow 4.8s ease-in-out infinite; }
+  .sb-brand .nm{ text-shadow:0 0 22px var(--wx2-glow-soft); }
+
+  /* Navigation : balayage doré au survol, rail actif vivant */
+  .nav-item::after{
+    content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+    background:linear-gradient(100deg, transparent 30%, rgba(231,200,119,.14) 50%, transparent 70%);
+    background-size:250% 100%; background-position:150% 0;
+    transition:background-position .7s var(--ease);
+  }
+  .nav-item:hover::after{ background-position:-50% 0; }
+  .nav-item svg{ transition:transform .35s var(--wx-spring), color .2s; }
+  .nav-item:hover svg{ transform:scale(1.14) rotate(-5deg); color:var(--accent-bright); }
+  .nav-item.active::before{ animation:wx2Rail 2.6s ease-in-out infinite; }
+  @keyframes wx2Rail{ 50%{ box-shadow:0 0 22px 4px rgba(231,200,119,.75); } }
+  .nav-item .badge.red{ animation:wx2Ping 2.4s ease-out infinite; }
+
+  /* Barre supérieure */
+  .search:focus-within svg{ color:var(--accent-bright); filter:drop-shadow(0 0 6px var(--wx2-glow)); transition:color .2s; }
+  .page-head .btn.gold{ animation:wx2Cta 3.6s ease-in-out infinite; }
+  @keyframes wx2Cta{
+    0%,100%{ box-shadow:inset 0 1px 0 rgba(255,255,255,.45), inset 0 -2px 0 rgba(0,0,0,.12), 0 8px 24px -6px rgba(201,162,75,.55), 0 0 0 0 rgba(231,200,119,.4); }
+    50%    { box-shadow:inset 0 1px 0 rgba(255,255,255,.45), inset 0 -2px 0 rgba(0,0,0,.12), 0 12px 30px -6px rgba(201,162,75,.75), 0 0 0 7px rgba(231,200,119,0); }
+  }
+  .top-btn .ping{ animation:wx2Ping 2.2s ease-out infinite; }
+  @keyframes wx2Ping{ 0%{ box-shadow:0 0 0 0 rgba(200,90,84,.6); } 80%,100%{ box-shadow:0 0 0 8px rgba(200,90,84,0); } }
+  
+  /* Widget horloge / stockage */
+  .sb-widget{ position:relative; overflow:hidden; }
+  .sb-widget::before{
+    content:""; position:absolute; left:14px; right:14px; top:0; height:1.5px; pointer-events:none;
+    background:var(--wx2-flow); background-size:200% 100%; animation:wx2Flow 4s linear infinite; opacity:.8;
+  }
+  .sb-clock .t .sec{ text-shadow:0 0 14px var(--wx2-glow); }
+
+  /* ==================== CONTENU ==================== */
+  /* Titre de page : reflet doré qui traverse le titre */
+  .page-head h2{
+    background:linear-gradient(100deg, var(--txt) 0%, var(--txt) 34%, var(--or-400) 45%, var(--wx2-shine) 50%, var(--or-300) 55%, var(--txt) 66%, var(--txt) 80%, var(--accent-bright) 100%);
+    background-size:260% 100%; background-position:100% 0;
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    animation:wx2Shimmer 8s ease-in-out infinite .4s;
+    filter:drop-shadow(0 0 26px var(--wx2-glow-soft));
+  }
+  .page-head .eyebrow::before{ animation:wx2Line .9s var(--ease) both .15s; box-shadow:0 0 10px var(--wx2-glow); }
+  @keyframes wx2Line{ from{ width:0; opacity:0; } }
+  .view .page-head > *{ animation:wx2Up .55s var(--ease) both; }
+  .view .page-head > *:nth-child(2){ animation-delay:.1s; }
+
+  /* KPI : filet d'or animé, chiffres lumineux, icône qui respire */
+  .kpi::before{ background:var(--wx2-flow); background-size:200% 100%; animation:wx2Flow 5s linear infinite; transition:left .4s var(--ease), right .4s var(--ease); }
+  .kpi:hover::before{ left:0; right:0; opacity:1; }
+  @keyframes wx2Flow{ to{ background-position:-200% 0; } }
+  .kpi .num{ filter:drop-shadow(0 0 16px var(--wx2-glow-soft)); transition:transform .4s var(--wx-spring); transform-origin:left bottom; }
+  .kpi:hover .num{ transform:scale(1.06); }
+  .kpi .ic{ animation:wx2Icon 3.8s ease-in-out infinite; }
+  .kpi-grid > .kpi:nth-child(2) .ic{ animation-delay:.5s; } .kpi-grid > .kpi:nth-child(3) .ic{ animation-delay:1s; }
+  .kpi-grid > .kpi:nth-child(4) .ic{ animation-delay:1.5s; } .kpi-grid > .kpi:nth-child(5) .ic{ animation-delay:2s; }
+  .kpi-grid > .kpi:nth-child(6) .ic{ animation-delay:2.5s; } .kpi-grid > .kpi:nth-child(7) .ic{ animation-delay:3s; }
+  @keyframes wx2Icon{
+    0%,100%{ box-shadow:inset 0 0 0 1px currentColor, 0 8px 20px -8px currentColor; }
+    50%    { box-shadow:inset 0 0 0 1px currentColor, 0 0 24px -2px currentColor; }
+  }
+  .kpi-grid > *:nth-child(6){ animation-delay:.3s; } .kpi-grid > *:nth-child(7){ animation-delay:.36s; }
+  .kpi-grid > *:nth-child(8){ animation-delay:.42s; }
+
+  /* Panneaux : filet doré sous l'en-tête */
+  .panel-h{ position:relative; }
+  .panel-h::after{
+    content:""; position:absolute; left:20px; right:20px; bottom:-1px; height:1px; pointer-events:none;
+    background:linear-gradient(90deg, var(--or-400), rgba(201,162,75,.25) 40%, transparent);
+    transform-origin:left; animation:wx2Grow 1s var(--ease) both .35s;
+  }
+  @keyframes wx2Grow{ from{ transform:scaleX(0); } }
+  .panel-h h3{ transition:color .3s; }
+  .panel:hover .panel-h h3{ color:var(--accent-bright); }
+
+  /* Tableaux : lignes en cascade + balayage */
+  .view table.tbl tbody tr{ animation:wx2Up .45s var(--ease) both; }
+  .view table.tbl tbody tr:nth-child(2){ animation-delay:.04s; }  .view table.tbl tbody tr:nth-child(3){ animation-delay:.08s; }
+  .view table.tbl tbody tr:nth-child(4){ animation-delay:.12s; }  .view table.tbl tbody tr:nth-child(5){ animation-delay:.16s; }
+  .view table.tbl tbody tr:nth-child(6){ animation-delay:.20s; }  .view table.tbl tbody tr:nth-child(7){ animation-delay:.24s; }
+  .view table.tbl tbody tr:nth-child(8){ animation-delay:.28s; }  .view table.tbl tbody tr:nth-child(9){ animation-delay:.32s; }
+  .view table.tbl tbody tr:nth-child(n+10){ animation-delay:.36s; }
+  table.tbl tbody tr:hover{ background:linear-gradient(90deg, var(--or-glow), transparent 85%); }
+  table.tbl th[aria-sort] button.sort{ text-shadow:0 0 12px var(--wx2-glow); }
+  table.tbl tbody tr:hover .cell-user .av{ box-shadow:0 0 0 2px var(--bg-card), 0 0 0 3.5px var(--accent), 0 0 16px var(--wx2-glow); }
+  .cell-user .av{ transition:box-shadow .3s; }
+
+  /* Messagerie */
+  .conv{ transition:background .2s, box-shadow .25s; }
+  .conv.active{ box-shadow:inset 3px 0 0 var(--accent), inset 0 0 30px -12px var(--wx2-glow); }
+  .conv .unread{ animation:wx2Glow 2.4s ease-in-out infinite; }
+  @keyframes wx2Glow{ 50%{ box-shadow:0 0 12px 2px var(--wx2-glow); } }
+  .thread-b > .bubble{ animation:wx2Up .45s var(--ease) both; }
+  .bubble.out{ box-shadow:0 8px 22px -10px var(--wx2-glow); }
+  .empty-thread svg{ width:64px; height:64px; color:var(--accent-bright); opacity:.55; animation:wx2Float 4s ease-in-out infinite; filter:drop-shadow(0 10px 18px var(--wx2-glow-soft)); }
+
+  /* Profil : grands avatars avec halo */
+  .av.lg, .av.xl{ box-shadow:0 0 0 2px var(--bg-card), 0 0 0 3.5px var(--accent), 0 14px 34px -12px var(--wx2-glow); }
+
+  /* Kanban */
+  .kcol-h{ position:relative; }
+  .kcol-h::after{
+    content:""; position:absolute; left:16px; right:16px; bottom:-1px; height:1px; pointer-events:none;
+    background:linear-gradient(90deg, var(--or-400), transparent);
+  }
+  .kcol-b > .kcard{ animation:wx2Up .5s var(--ease) both; }
+  .kcol-b > .kcard:nth-child(2){ animation-delay:.06s; } .kcol-b > .kcard:nth-child(3){ animation-delay:.12s; }
+  .kcol-b > .kcard:nth-child(n+4){ animation-delay:.18s; }
+
+  /* ==================== GRAPHIQUES ==================== */
+  .chart-bars .bar{
+    transform-origin:bottom; animation:wx2BarY 1s var(--ease) both .3s;
+    box-shadow:inset 0 2px 0 rgba(255,255,255,.35), 0 0 22px -4px var(--wx2-glow);
+  }
+  .chart-bars .bar-col:nth-child(2) .bar{ animation-delay:.38s; } .chart-bars .bar-col:nth-child(3) .bar{ animation-delay:.46s; }
+  .chart-bars .bar-col:nth-child(4) .bar{ animation-delay:.54s; } .chart-bars .bar-col:nth-child(5) .bar{ animation-delay:.62s; }
+  .chart-bars .bar-col:nth-child(6) .bar{ animation-delay:.70s; } .chart-bars .bar-col:nth-child(n+7) .bar{ animation-delay:.78s; }
+  @keyframes wx2BarY{ from{ transform:scaleY(0); } }
+  .chart-bars .bar:hover{ box-shadow:inset 0 2px 0 rgba(255,255,255,.45), 0 0 30px var(--wx2-glow); }
+
+  .donut{ animation:wx2Donut 1.6s var(--ease) both .3s; box-shadow:0 0 0 1px var(--or-line), 0 0 40px -6px var(--wx2-glow); }
+  @keyframes wx2Donut{ from{ --p:0; } }
+  .donut .val{ filter:drop-shadow(0 0 12px var(--wx2-glow-soft)); }
+
+  .stat-row .lbar > span{ transform-origin:left; animation:wx2Grow 1.1s var(--ease) both .3s; box-shadow:0 0 12px var(--wx2-glow-soft); }
+  .stat-row:nth-child(2) .lbar > span{ animation-delay:.4s; } .stat-row:nth-child(3) .lbar > span{ animation-delay:.5s; }
+  .stat-row:nth-child(4) .lbar > span{ animation-delay:.6s; } .stat-row:nth-child(n+5) .lbar > span{ animation-delay:.7s; }
+
+  .prog > span{
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,.55), transparent) 0 0/40% 100% no-repeat, var(--wx-gold);
+    animation:wx2Sheen 2.8s ease-in-out infinite;
+  }
+  @keyframes wx2Sheen{ 0%{ background-position:-60% 0, 0 0; } 70%,100%{ background-position:180% 0, 0 0; } }
+
+  /* ==================== SURCOUCHES ==================== */
+  .modal-h, .drawer-h{ position:relative; }
+  .modal-h::after, .drawer-h::after{
+    content:""; position:absolute; left:24px; right:24px; bottom:-1px; height:1px; pointer-events:none;
+    background:linear-gradient(90deg, transparent, var(--or-400), var(--wx2-shine), var(--or-400), transparent);
+    opacity:.8;
+  }
+  .overlay.on .modal{ animation:wx2Modal .5s var(--wx-spring) both; }
+  @keyframes wx2Modal{ from{ opacity:0; scale:.94; filter:blur(6px); } }
+  .drawer.on .drawer-b > *{ animation:wx2Up .5s var(--ease) both .12s; }
+
+  .tab.active{ text-shadow:0 0 14px var(--wx2-glow); }
+  .seg button.on{ box-shadow:inset 0 0 0 1px var(--or-line), 0 4px 16px -6px var(--wx2-glow); }
+
+  .toast{ position:relative; overflow:hidden; }
+  .toast::after{
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background:linear-gradient(105deg, transparent 35%, rgba(231,200,119,.18) 50%, transparent 65%);
+    background-size:250% 100%; animation:wx2Toast 1.4s var(--ease) both .25s;
+  }
+  @keyframes wx2Toast{ from{ background-position:150% 0; } to{ background-position:-50% 0; } }
+
+  .cal .day.today{ animation:wx2Today 2.8s ease-in-out infinite; }
+  @keyframes wx2Today{ 50%{ box-shadow:0 0 0 2px var(--or-glow), 0 0 22px -2px var(--wx2-glow); } }
+
+  .empty svg{ animation:wx2Float 4s ease-in-out infinite; filter:drop-shadow(0 8px 14px var(--wx2-glow-soft)); }
+
+  /* ==================== GARDE-FOUS ==================== */
+  /* Contraste élevé : sobriété totale */
+  html[data-contrast="high"] #login::before, html[data-contrast="high"] #login::after,
+  html[data-contrast="high"] .login-box::before, html[data-contrast="high"] .nav-item::after,
+  html[data-contrast="high"] .sb-widget::before, html[data-contrast="high"] .panel-h::after,
+  html[data-contrast="high"] .kcol-h::after, html[data-contrast="high"] .modal-h::after,
+  html[data-contrast="high"] .drawer-h::after, html[data-contrast="high"] .toast::after{ display:none; }
+  html[data-contrast="high"] .topbar, html[data-contrast="high"] .sidebar{ background-image:none; animation:none; }
+  html[data-contrast="high"] .login-box h1, html[data-contrast="high"] .page-head h2{ background:none; color:var(--txt); animation:none; filter:none; }
+  html[data-contrast="high"] .kpi .num{ filter:none; }
+  html[data-contrast="high"] .page-head .btn.gold, html[data-contrast="high"] #loginBtn, html[data-contrast="high"] .kpi .ic,
+  html[data-contrast="high"] .brand-mark, html[data-contrast="high"] .sb-brand .mk{ animation:none; }
+
+  /* Impression */
+  @media print{
+    #login::before, #login::after, .login-box::before, .toast::after{ display:none !important; }
+    .topbar, .sidebar{ background-image:none !important; }
+    .page-head h2{ background:none !important; color:#000 !important; filter:none !important; }
+  }

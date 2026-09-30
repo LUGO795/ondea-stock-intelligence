@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Ondea Stock Intelligence — gestion intelligente des stocks pour les petites entreprises, commerces, artisans et PME. 100 % locale, sans serveur.">
+<meta name="color-scheme" content="dark light">
+<title>Ondea Stock Intelligence</title>
+
+<!-- Favicon intégré (aucune requête réseau) — même marque que la gamme Ondea Studio -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%23f4d999'/><stop offset='1' stop-color='%23d4a94b'/></linearGradient></defs><rect width='64' height='64' rx='16' fill='url(%23g)'/><text x='32' y='45' font-family='Georgia,serif' font-size='40' font-weight='800' text-anchor='middle' fill='%2307090d'>O</text></svg>">
+
+<!-- Thème appliqué AVANT l'affichage (évite un flash de couleur) -->
+<script>
+  (function(){try{
+    var t=localStorage.getItem('ondea_theme'); if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;
+    var c=localStorage.getItem('ondea_contrast'); document.documentElement.setAttribute('data-contrast',c==='high'?'high':'normal');
+    var z=localStorage.getItem('ondea_stock_textsize'); if(z)document.documentElement.style.fontSize=z+'%';
+  }catch(e){}})();
+</script>
+
+<!-- Feuilles de style : 1) polices, 2) design system de référence, 3) couches premium, 4) composants « stocks » -->
+<link rel="stylesheet" href="css/fonts.css">
+<link rel="stylesheet" href="css/ondea-core.css">
+<link rel="stylesheet" href="css/ondea-premium.css">
+<link rel="stylesheet" href="css/stock.css">
+<link rel="stylesheet" href="css/etiquettes-lisibles.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Aller au contenu principal</a>
+
+<!-- Fond animé discret (icônes « stocks »), masqué pour les lecteurs d'écran -->
+<div class="ondea-bg-icons" id="ondeaBgIcons" aria-hidden="true"></div>
+
+<!-- ============ ÉCRAN D'ACCUEIL (choix de l'opérateur / première utilisation) ============ -->
+<div id="login" role="main" aria-labelledby="loginTitle">
+  <button class="login-theme-btn" id="loginThemeBtn" type="button" aria-label="Passer au thème clair" title="Passer au thème clair"></button>
+  <div class="login-box" id="loginBox">
+    <div class="brand-mark" aria-hidden="true">◆</div>
+    <h1 id="loginTitle">Ondea <span class="gold">Stock</span></h1>
+    <p class="sub" id="loginSub">La gestion intelligente de vos stocks, simplement.</p>
+    <div id="loginBody"><p class="muted">Chargement de vos données…</p></div>
+  </div>
+</div>
+
+<!-- ============ APPLICATION ============ -->
+<div id="app">
+  <div class="scrim" id="scrim" aria-hidden="true"></div>
+  <aside class="sidebar" id="sidebar" aria-label="Menu latéral">
+    <div class="sb-brand">
+      <div class="mk" aria-hidden="true">◆</div>
+      <div class="nm">Ondea Stock<small id="sbCompany">Intelligence</small></div>
+    </div>
+    <nav class="sb-nav" id="sbNav" aria-label="Navigation principale"></nav>
+    <div class="sb-widget" id="sbWidget">
+      <div class="sb-clock"><div class="t" id="sbClock" aria-hidden="true">--:--:--</div><div class="d" id="sbDate">—</div></div>
+      <div class="sb-store" id="sbStore"></div>
+    </div>
+    <div class="sb-foot">
+      <div class="sb-user">
+        <div class="av sm" id="sbAvatar" aria-hidden="true"></div>
+        <div class="meta"><b id="sbUserName">—</b><small id="sbUserRole">—</small></div>
+        <button class="x-btn" id="logoutBtn" type="button" title="Changer d'opérateur" aria-label="Changer d'opérateur" style="margin-left:auto">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <header class="topbar">
+    <button class="top-btn burger" id="burger" type="button" aria-label="Ouvrir le menu" aria-controls="sidebar" aria-expanded="false">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div class="search" role="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <input id="globalSearch" type="search" role="combobox" aria-autocomplete="list" autocomplete="off" aria-label="Rechercher un produit, un code-barres, un fournisseur ou une commande" placeholder="Produit, code-barres, fournisseur, commande…" aria-controls="searchDrop" aria-expanded="false">
+      <div id="searchDrop" class="dropdown search-drop hide" role="listbox" aria-label="Résultats de recherche"></div>
+    </div>
+    <div class="top-actions">
+      <button class="top-btn" id="bgPauseBtn" type="button" aria-pressed="false" aria-label="Mettre en pause les animations d'arrière-plan" title="Mettre en pause les animations d'arrière-plan">
+        <svg class="ic-pause" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M9 5v14M15 5v14"/></svg>
+        <svg class="ic-play" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 4.5v15l12.5-7.5z"/></svg>
+      </button>
+      <button class="top-btn txt-btn" id="textSizeBtn" type="button" aria-label="Taille du texte : 100 %" title="Taille du texte"><span aria-hidden="true">A<small>A</small></span></button>
+      <button class="top-btn" id="contrastBtn" type="button" aria-pressed="false" aria-label="Contraste élevé" title="Contraste élevé">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none"/></svg>
+      </button>
+      <button class="top-btn" id="themeBtn" type="button" title="Thème clair/sombre" aria-label="Changer de thème"></button>
+      <button class="top-btn" id="notiBtn" type="button" aria-label="Alertes de stock" title="Alertes et ruptures">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+        <span class="ping hide" id="notiPing">0</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="main" id="main" tabindex="-1" aria-labelledby="pageTitle"></main>
+</div>
+
+<!-- ============ MODALES (niveau 1 : formulaires ; niveau 2 : confirmations) ============ -->
+<div class="overlay" id="overlay" aria-hidden="true"><div class="modal" role="dialog" aria-modal="true"></div></div>
+<div class="overlay lvl2" id="overlay2" aria-hidden="true"><div class="modal" role="dialog" aria-modal="true"></div></div>
+
+<!-- ============ PANNEAU LATÉRAL (fiches détaillées) ============ -->
+<div class="drawer-scrim" id="drawerScrim" aria-hidden="true"></div>
+<div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-hidden="true" tabindex="-1" aria-label="Fiche détaillée"></div>
+
+<!-- ============ NOTIFICATIONS ============ -->
+<div id="toasts" role="region" aria-live="polite" aria-label="Notifications système"></div>
+<div id="srLive" class="sr-only" aria-live="polite"></div>
+
+<!-- ============ ZONE D'IMPRESSION (bons de commande, rapports) ============ -->
+<div id="printArea" aria-hidden="true"></div>
+
+<!-- Scripts : chargés dans l'ordre (aucun module ES → fonctionne en double-clic, file://) -->
+<script src="js/core/utils.js"></script>
+<script src="js/core/db.js"></script>
+<script src="js/core/store.js"></script>
+<script src="js/core/engine.js"></script>
+<script src="js/ui/ui.js"></script>
+<script src="js/ui/charts.js"></script>
+<script src="js/io/exports.js"></script>
+<script src="js/views/dashboard.js"></script>
+<script src="js/views/products.js"></script>
+<script src="js/views/catalog.js"></script>
+<script src="js/views/movements.js"></script>
+<script src="js/views/inventories.js"></script>
+<script src="js/views/alerts.js"></script>
+<script src="js/views/suppliers.js"></script>
+<script src="js/views/orders.js"></script>
+<script src="js/views/stats.js"></script>
+<script src="js/views/reports.js"></script>
+<script src="js/views/settings.js"></script>
+<script src="js/demo.js"></script>
+<script src="js/app.js"></script>
+<script src="js/pin-login.js"></script>
+<script src="js/pin-eye.js"></script>
+<script src="js/logo-brand.js"></script>
+<script src="js/demo-toggle.js"></script>
+<script src="js/image-zoom.js"></script>
+<script src="js/produits-visibilite.js"></script>
+<script src="js/fournisseurs-photos.js"></script>
+</body>
+</html>
